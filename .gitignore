@@ -1,0 +1,12 @@
+node_modules
+.DS_Store
+coverage
+*.js
+*.d.ts
+dist
+.npmrc
+junit.xml
+!cucumber.js
+cucumber.report.json
+cdk.out
+.idea
