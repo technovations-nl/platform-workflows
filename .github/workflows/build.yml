@@ -35,9 +35,6 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: "14"
-
-    - name: Install NPM peers
-      run: npm install -g npm-install-peers
     
     - name: Install dependencies
       run: npm install
