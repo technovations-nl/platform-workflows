@@ -1,0 +1,88 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      IS_RELEASABLE:
+        required: true
+        type: string
+      IS_DEPLOYABLE:
+        required: true
+        type: string
+      IS_UNIT_TESTABLE:
+        required: true
+        type: string
+      IS_INTEGRATION_TESTABLE:
+        required: true
+        type: string
+
+env:
+  SETUP_SDK: ${{ inputs.IS_DEPLOYABLE == 'true' }}
+  DO_SYNTH: ${{ inputs.IS_DEPLOYABLE == 'true' && github.event_name != 'pull_request' }}
+  DO_DEPLOY: ${{ ((github.event_name == 'pull_request' && github.event.action != 'closed') || inputs.IS_RELEASABLE == 'true') && inputs.IS_DEPLOYABLE == 'true' }}
+  DO_DESTROY: ${{ ((github.event_name == 'pull_request' && github.event.action == 'closed') || inputs.IS_RELEASABLE == 'true') && inputs.IS_DEPLOYABLE == 'true' }}
+  PUBLISH_AS_PR: ${{ inputs.IS_RELEASABLE != 'true' && github.event_name == 'pull_request' && github.event.action != 'closed' }}
+  PUBLISH_AS_RELEASE: ${{ inputs.IS_RELEASABLE == 'true' }}
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Checkout repo
+      uses: actions/checkout@v3
+    
+    - uses: actions/setup-node@v2
+      with:
+        node-version: "14"
+    
+    - name: Install dependencies
+      run: npm install
+    
+    - name: Install AWS CLI
+      if: ${{env.SETUP_SDK == 'true'}}
+      run: npm install -g aws-cdk
+    
+    - name: Run the unit tests
+      if: ${{inputs.IS_UNIT_TESTABLE == 'true'}}
+      run: npm run test:unit
+
+    - name: Publish Unit test results
+      uses: EnricoMi/publish-unit-test-result-action/composite@v1
+      if: ${{inputs.IS_UNIT_TESTABLE == 'true'}}
+      with:
+        check_name: "Unit Tests"
+        files: ./junit.xml
+
+    - name: Build the source
+      run: npm run build
+
+    - name: Synthesize the stack
+      if: ${{env.DO_SYNTH == 'true'}}
+      run: npm run synth:cdk
+
+    - name: Configure AWS credentials
+      if: ${{env.DO_DEPLOY == 'true' || env.DO_DESTROY == 'true'}}
+      uses: aws-actions/configure-aws-credentials@master
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-region: 'eu-west-1'
+
+    - name: Deploy the stack
+      if: ${{env.DO_DEPLOY == 'true'}}
+      run: npm run deploy
+
+    - name: Integration Tests
+      if: ${{env.DO_DEPLOY == 'true' && inputs.IS_INTEGRATION_TESTABLE == 'true'}}
+      run: |
+        npm run test:integration
+
+    # fix version?
+
+    # publish
+
+    - name: Destroy the stack
+      if: ${{ env.DO_DESTROY == 'true' }}
+      run: |
+        npm run destroy
