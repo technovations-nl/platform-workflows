@@ -47,13 +47,6 @@ jobs:
       if: ${{inputs.IS_UNIT_TESTABLE == 'true'}}
       run: npm run test:unit
 
-    - name: Publish Unit test results
-      uses: EnricoMi/publish-unit-test-result-action/composite@v1
-      if: ${{inputs.IS_UNIT_TESTABLE == 'true'}}
-      with:
-        check_name: "Unit Tests"
-        files: ./junit.xml
-
     - name: Build the source
       run: npm run build
 
