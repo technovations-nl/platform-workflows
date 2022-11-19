@@ -24,10 +24,6 @@ env:
   PUBLISH_AS_PR: ${{ inputs.IS_RELEASABLE != 'true' && github.event_name == 'pull_request' && github.event.action != 'closed' }}
   PUBLISH_AS_RELEASE: ${{ inputs.IS_RELEASABLE == 'true' }}
 
-permissions:
-  packages: write
-  contents: read
-
 jobs:
   Build:
     runs-on: ubuntu-latest
