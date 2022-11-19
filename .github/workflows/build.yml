@@ -34,7 +34,8 @@ jobs:
     
     - uses: actions/setup-node@v3
       with:
-        node-version: "16"
+        node-version: '16.x'
+        registry-url: 'https://npm.pkg.github.com'
     
     - name: Install dependencies
       run: npm clean-install
@@ -71,11 +72,11 @@ jobs:
       run: |
         npm run test:integration
 
-    - uses: actions/setup-node@v3
+    - name: Publish the package
       if: ${{ env.PUBLISH_AS_PR == 'true' || env.PUBLISH_AS_RELEASE == 'true' }}
-      with:
-        node-version: '16.x'
-        registry-url: 'https://npm.pkg.github.com'
+      run: npm run publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Destroy the stack
       if: ${{ env.DO_DESTROY == 'true' }}
