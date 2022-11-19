@@ -82,7 +82,7 @@ jobs:
       if: ${{ env.PUBLISH_AS_PR == 'true' || env.PUBLISH_AS_RELEASE == 'true' }}
       run: npm run publish
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.TOKEN }}
 
     - name: Destroy the stack
       if: ${{ env.DO_DESTROY == 'true' }}
