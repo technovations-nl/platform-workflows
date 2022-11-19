@@ -73,9 +73,9 @@ jobs:
 
     - uses: actions/setup-node@v3
       if: ${{ env.PUBLISH_AS_PR == 'true' || env.PUBLISH_AS_RELEASE == 'true' }}
-        with:
-          node-version: '16.x'
-          registry-url: 'https://npm.pkg.github.com'
+      with:
+        node-version: '16.x'
+        registry-url: 'https://npm.pkg.github.com'
 
     - name: Destroy the stack
       if: ${{ env.DO_DESTROY == 'true' }}
