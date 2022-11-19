@@ -15,9 +15,6 @@ on:
       IS_INTEGRATION_TESTABLE:
         required: true
         type: string
-      PUBLISH_TOKEN:
-        required: true
-        type: string
 
 env:
   SETUP_SDK: ${{ inputs.IS_DEPLOYABLE == 'true' }}
@@ -81,7 +78,7 @@ jobs:
       if: ${{ env.PUBLISH_AS_PR == 'true' || env.PUBLISH_AS_RELEASE == 'true' }}
       run: npm run publish
       env:
-        NODE_AUTH_TOKEN: ${{ inputs.PUBLISH_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Destroy the stack
       if: ${{ env.DO_DESTROY == 'true' }}
