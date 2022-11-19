@@ -74,6 +74,12 @@ jobs:
       run: |
         npm run test:integration
 
+    - name: Setup Git
+      if: ${{env.PUBLISH_AS_PR == 'true' || env.PUBLISH_AS_RELEASE == 'true'}}
+      run: |
+        git config --global user.email "github-action@technovations.nl"
+        git config --global user.name "Github Actions Technovations"
+
     - name: Create pre-release
       if: ${{env.PUBLISH_AS_PR == 'true' || env.PUBLISH_AS_RELEASE == 'true'}}
       run: npm version prerelease
