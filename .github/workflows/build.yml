@@ -77,8 +77,8 @@ jobs:
     - name: Setup Git
       if: ${{env.PUBLISH_AS_PR == 'true' || env.PUBLISH_AS_RELEASE == 'true'}}
       run: |
-        git config --global user.email "github-action@technovations.nl"
-        git config --global user.name "Github Actions Technovations"
+        git config --global user.email "heino@technovations.nl"
+        git config --global user.name "Heino Lenting"
 
     - name: Create pre-release
       if: ${{env.PUBLISH_AS_PR == 'true' || env.PUBLISH_AS_RELEASE == 'true'}}
