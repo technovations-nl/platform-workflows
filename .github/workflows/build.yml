@@ -75,7 +75,7 @@ jobs:
         npm run test:integration
 
     - name: Create pre-release
-      if: ${{env.PUBLISH_AS_PR == 'true'}}
+      if: ${{env.PUBLISH_AS_PR == 'true' || env.PUBLISH_AS_RELEASE == 'true'}}
       run: npm version prerelease
 
     - name: Publish the package
